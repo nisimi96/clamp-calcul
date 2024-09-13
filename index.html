@@ -467,9 +467,9 @@
         function copyToClipboard() {
             const copyText = document.getElementById('copy-btn').getAttribute('data-clipboard');
             navigator.clipboard.writeText(copyText).then(() => {
-                // Code copied successfully
+                
             }, (err) => {
-                console.error('Failed to copy: ', err);
+                alert('Failed to copy: ', err);
             });
         }
     </script>
