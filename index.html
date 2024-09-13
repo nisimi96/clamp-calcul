@@ -70,9 +70,31 @@
             text-align: center;
             transition: border-color 0.3s ease;
         }
+         
+        .one-side-btn{
+            padding: 15px;
+            background-color: #d4af37;
+            color: black;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.4s ease, transform 0.3s ease;
+        }
+
+        .one-side-btn:hover {
+            background-color: #f1c453;
+            transform: translateY(-2px);
+        }
+
+        .one-side-btn:focus {
+            background-color: #f1c453;
+            transform: translateY(-2px);
+        }
 
         input {
-            width: 60px;
+            width: 70px;
             padding: 6px;
             margin: 0 5px;
             border: 1px solid #444;
@@ -81,6 +103,11 @@
             color: #f4f4f4;
             font-size: 16px;
             text-align: center;
+        }
+
+        input:focus {
+            border-color: #d4af37;
+            outline: none;
         }
 
         /* Hide the arrows for WebKit browsers */
@@ -94,7 +121,7 @@
         input[type="number"] {
             -moz-appearance: textfield;
         }
-
+        
         /* Scale up on focus */
         input:focus {
             transform: scale(1.2);
@@ -149,13 +176,27 @@
             background-color: #666;
         }
 
-        /* New styles for the side buttons */
-        .sub-btn-group {
-            display: none;
-            margin-top: 20px;
+        .side-inputs {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 10px 0;
         }
 
-        .sub-btn-group button {
+        .side-inputs label {
+            margin: 0 10px;
+            font-size: 14px;
+        }
+
+        .small-input-group {
+            display: inline-block;
+        }
+
+        .option-buttons {
+            margin: 15px 0;
+        }
+
+        .option-buttons button {
             background-color: #555;
             color: white;
             padding: 8px 15px;
@@ -167,10 +208,9 @@
             transition: background-color 0.3s;
         }
 
-        .sub-btn-group button:hover {
+        .option-buttons button:hover {
             background-color: #777;
         }
-
     </style>
 </head>
 <body>
@@ -184,32 +224,104 @@
             <button onclick="showSection('height')">Height</button>
         </div>
 
-        <!-- Sub-buttons for choosing sides -->
-        <div id="sub-btn-group" class="sub-btn-group">
-            <button onclick="setSide('top')">Top</button>
-            <button onclick="setSide('right')">Right</button>
-            <button onclick="setSide('bottom')">Bottom</button>
-            <button onclick="setSide('left')">Left</button>
+        <!-- Padding/Margin Option Buttons -->
+        <div id="option-buttons" class="option-buttons" style="display:none;">
+            <button onclick="handleOptionChange('all')">All Sides</button>
+            <button onclick="handleOptionChange('one')">One Side</button>
+            <button onclick="handleOptionChange('two')">Top-Bottom, Right-Left</button>
+            <button onclick="handleOptionChange('three')">Top, Right-Left, Bottom</button>
         </div>
 
         <!-- General Input Section -->
         <div id="general-section" class="input-section">
             <h2 id="property-title">Calculate Property</h2>
 
-            <!-- Input fields for Padding/Margin sides -->
-            <div id="side-inputs" style="display:none;">
-                <label for="side-min">Minimum Value (px):</label>
-                <input type="number" id="side-min" class="small-input" placeholder="Min">
-                <label for="side-max">Maximum Value (px):</label>
-                <input type="number" id="side-max" class="small-input" placeholder="Max">
-            </div>
-
-            <!-- Input fields for font-size, width, height -->
-            <div id="standard-inputs">
+            <!-- Font Size, Width, Height Section -->
+            <div id="standard-inputs" style="display:none;">
                 <label for="min">Minimum Value (px):</label>
                 <input type="number" id="min" placeholder="e.g., 14">
+                <br>
                 <label for="max">Maximum Value (px):</label>
                 <input type="number" id="max" placeholder="e.g., 24">
+            </div>
+
+            <!-- Inputs for padding/margin -->
+            <div id="padding-margin-inputs" style="display:none;">
+                <!-- Inputs for all sides -->
+                <div id="all-sides" class="side-inputs">
+                    <div class="small-input-group">
+                        <label for="top-min">Top Min</label>
+                        <input type="number" id="top-min" class="small-input" placeholder="Top Min">
+                        <br>
+                        <label for="top-max">Top Max</label>
+                        <input type="number" id="top-max" class="small-input" placeholder="Top Max">
+                    </div>
+                    <div class="small-input-group">
+                        <label for="right-min">Right Min</label>
+                        <input type="number" id="right-min" class="small-input" placeholder="Right Min">
+                        <br>
+                        <label for="right-max">Right Max</label>
+                        <input type="number" id="right-max" class="small-input" placeholder="Right Max">
+                    </div>
+                    <div class="small-input-group">
+                        <label for="bottom-min">Bottom Min</label>
+                        <input type="number" id="bottom-min" class="small-input" placeholder="Bottom Min">
+                        <br>
+                        <label for="bottom-max">Bottom Max</label>
+                        <input type="number" id="bottom-max" class="small-input" placeholder="Bottom Max">
+                    </div>
+                    <div class="small-input-group">
+                        <label for="left-min">Left Min</label>
+                        <input type="number" id="left-min" class="small-input" placeholder="Left Min">
+                        <br>
+                        <label for="left-max">Left Max</label>
+                        <input type="number" id="left-max" class="small-input" placeholder="Left Max">
+                    </div>
+                </div>
+
+                <!-- Inputs for one side -->
+                <div id="one-side" class="side-inputs" style="display:none;">
+                    <label for="one-side-select">Select Side:</label>
+                    <button class="one-side-btn" onclick="setSide('top')">Top</button>
+                    <button class="one-side-btn" onclick="setSide('right')">Right</button>
+                    <button class="one-side-btn" onclick="setSide('bottom')">Bottom</button>
+                    <button class="one-side-btn" onclick="setSide('left')">Left</button>
+                    <label for="one-min">Min</label>
+                    <input type="number" id="one-min" class="small-input" placeholder="Min">
+                    <label for="one-max">Max</label>
+                    <input type="number" id="one-max" class="small-input" placeholder="Max">
+                </div>
+
+                <!-- Inputs for two sides -->
+                <div id="two-sides" class="side-inputs" style="display:none;">
+                    <label for="top-bottom-min">Top-Bottom Min</label>
+                    <input type="number" id="top-bottom-min" class="small-input" placeholder="Top-Bottom Min">
+                    <label for="top-bottom-max">Top-Bottom Max</label>
+                    <input type="number" id="top-bottom-max" class="small-input" placeholder="Top-Bottom Max">
+                    <br>
+                    <label for="right-left-min">Right-Left Min</label>
+                    <input type="number" id="right-left-min" class="small-input" placeholder="Right-Left Min">
+                    <label for="right-left-max">Right-Left Max</label>
+                    <input type="number" id="right-left-max" class="small-input" placeholder="Right-Left Max">
+                </div>
+
+                <!-- Inputs for three sides -->
+                <div id="three-sides" class="side-inputs" style="display:none;">
+                    <label for="three-top-min">Top Min</label>
+                    <input type="number" id="three-top-min" class="small-input" placeholder="Top Min">
+                    <label for="three-top-max">Top Max</label>
+                    <input type="number" id="three-top-max" class="small-input" placeholder="Top Max">
+                    <br>
+                    <label for="three-right-left-min">Right-Left Min</label>
+                    <input type="number" id="three-right-left-min" class="small-input" placeholder="Right-Left Min">
+                    <label for="three-right-left-max">Right-Left Max</label>
+                    <input type="number" id="three-right-left-max" class="small-input" placeholder="Right-Left Max">
+                    <br>
+                    <label for="three-bottom-min">Bottom Min</label>
+                    <input type="number" id="three-bottom-min" class="small-input" placeholder="Bottom Min">
+                    <label for="three-bottom-max">Bottom Max</label>
+                    <input type="number" id="three-bottom-max" class="small-input" placeholder="Bottom Max">
+                </div>
             </div>
 
             <label for="vw">Viewport Width (vw):</label>
@@ -223,7 +335,8 @@
 
     <script>
         let currentProperty = ''; // To track the selected property
-        let currentSide = ''; // To track the selected side for padding or margin
+        let selectedOption = 'all'; // Track the selected padding/margin option
+        let currentSide = ''; // To track the selected side for one side option
 
         function showSection(property) {
             currentProperty = property; // Set the current property
@@ -232,36 +345,106 @@
             document.getElementById('result').textContent = '';  // Clear result when changing sections
             document.getElementById('copy-btn').style.display = 'none';  // Hide copy button
 
-            // Show sub-buttons for sides if padding/margin is selected
             if (property === 'padding' || property === 'margin') {
-                document.getElementById('sub-btn-group').style.display = 'block';
-                document.getElementById('side-inputs').style.display = 'none';  // Hide side inputs until a side is selected
-                document.getElementById('standard-inputs').style.display = 'none'; // Hide standard inputs
+                document.getElementById('option-buttons').style.display = 'block';
+                document.getElementById('padding-margin-inputs').style.display = 'block';
+                document.getElementById('standard-inputs').style.display = 'none';
             } else {
-                document.getElementById('sub-btn-group').style.display = 'none';
-                document.getElementById('side-inputs').style.display = 'none';
-                document.getElementById('standard-inputs').style.display = 'block';  // Show standard inputs for other properties
+                document.getElementById('option-buttons').style.display = 'none';
+                document.getElementById('padding-margin-inputs').style.display = 'none';
+                document.getElementById('standard-inputs').style.display = 'block';
+            }
+        }
+
+        function handleOptionChange(option) {
+            selectedOption = option;
+
+            // Hide all side input sections first
+            document.getElementById('all-sides').style.display = 'none';
+            document.getElementById('one-side').style.display = 'none';
+            document.getElementById('two-sides').style.display = 'none';
+            document.getElementById('three-sides').style.display = 'none';
+
+            // Show relevant section based on the selected option
+            if (option === 'all') {
+                document.getElementById('all-sides').style.display = 'block';
+            } else if (option === 'one') {
+                document.getElementById('one-side').style.display = 'block';
+            } else if (option === 'two') {
+                document.getElementById('two-sides').style.display = 'block';
+            } else if (option === 'three') {
+                document.getElementById('three-sides').style.display = 'block';
             }
         }
 
         function setSide(side) {
-            currentSide = side; // Set the selected side
-            document.getElementById('side-inputs').style.display = 'block';  // Show side-specific inputs
+            currentSide = side;
         }
 
-        // General function to calculate clamp() based on input values and property
         function generateClamp() {
             const vw = parseFloat(document.getElementById('vw').value);
             let clampCode = '';
 
             if (currentProperty === 'padding' || currentProperty === 'margin') {
-                const min = parseFloat(document.getElementById('side-min').value);
-                const max = parseFloat(document.getElementById('side-max').value);
-                if (min && max && vw && min <= max) {
-                    const vwValue = ((max - min) / (vw / 10)).toFixed(1);
-                    clampCode = `${currentProperty}-${currentSide}: clamp(${min}px, ${vwValue}vw, ${max}px);`;
+                if (selectedOption === 'all') {
+                    // Generate for all sides
+                    const topMin = parseFloat(document.getElementById('top-min').value);
+                    const topMax = parseFloat(document.getElementById('top-max').value);
+                    const rightMin = parseFloat(document.getElementById('right-min').value);
+                    const rightMax = parseFloat(document.getElementById('right-max').value);
+                    const bottomMin = parseFloat(document.getElementById('bottom-min').value);
+                    const bottomMax = parseFloat(document.getElementById('bottom-max').value);
+                    const leftMin = parseFloat(document.getElementById('left-min').value);
+                    const leftMax = parseFloat(document.getElementById('left-max').value);
+
+                    if (topMin && topMax && rightMin && rightMax && bottomMin && bottomMax && leftMin && leftMax && vw) {
+                        const topVw = ((topMax - topMin) / (vw / 10)).toFixed(1);
+                        const rightVw = ((rightMax - rightMin) / (vw / 10)).toFixed(1);
+                        const bottomVw = ((bottomMax - bottomMin) / (vw / 10)).toFixed(1);
+                        const leftVw = ((leftMax - leftMin) / (vw / 10)).toFixed(1);
+
+                        clampCode = `${currentProperty}: clamp(${topMin}px, ${topVw}vw, ${topMax}px) clamp(${rightMin}px, ${rightVw}vw, ${rightMax}px) clamp(${bottomMin}px, ${bottomVw}vw, ${bottomMax}px) clamp(${leftMin}px, ${leftVw}vw, ${leftMax}px);`;
+                    }
+                } else if (selectedOption === 'one') {
+                    // Generate for one side
+                    const min = parseFloat(document.getElementById('one-min').value);
+                    const max = parseFloat(document.getElementById('one-max').value);
+                    if (min && max && vw) {
+                        const vwValue = ((max - min) / (vw / 10)).toFixed(1);
+                        clampCode = `${currentProperty}-${currentSide}: clamp(${min}px, ${vwValue}vw, ${max}px);`;
+                    }
+                } else if (selectedOption === 'two') {
+                    // Generate for two sides (top-bottom, right-left)
+                    const topBottomMin = parseFloat(document.getElementById('top-bottom-min').value);
+                    const topBottomMax = parseFloat(document.getElementById('top-bottom-max').value);
+                    const rightLeftMin = parseFloat(document.getElementById('right-left-min').value);
+                    const rightLeftMax = parseFloat(document.getElementById('right-left-max').value);
+
+                    if (topBottomMin && topBottomMax && rightLeftMin && rightLeftMax && vw) {
+                        const topBottomVw = ((topBottomMax - topBottomMin) / (vw / 10)).toFixed(1);
+                        const rightLeftVw = ((rightLeftMax - rightLeftMin) / (vw / 10)).toFixed(1);
+
+                        clampCode = `${currentProperty}: clamp(${topBottomMin}px, ${topBottomVw}vw, ${topBottomMax}px) clamp(${rightLeftMin}px, ${rightLeftVw}vw, ${rightLeftMax}px);`;
+                    }
+                } else if (selectedOption === 'three') {
+                    // Generate for three sides (top, right-left, bottom)
+                    const topMin = parseFloat(document.getElementById('three-top-min').value);
+                    const topMax = parseFloat(document.getElementById('three-top-max').value);
+                    const rightLeftMin = parseFloat(document.getElementById('three-right-left-min').value);
+                    const rightLeftMax = parseFloat(document.getElementById('three-right-left-max').value);
+                    const bottomMin = parseFloat(document.getElementById('three-bottom-min').value);
+                    const bottomMax = parseFloat(document.getElementById('three-bottom-max').value);
+
+                    if (topMin && topMax && rightLeftMin && rightLeftMax && bottomMin && bottomMax && vw) {
+                        const topVw = ((topMax - topMin) / (vw / 10)).toFixed(1);
+                        const rightLeftVw = ((rightLeftMax - rightLeftMin) / (vw / 10)).toFixed(1);
+                        const bottomVw = ((bottomMax - bottomMin) / (vw / 10)).toFixed(1);
+
+                        clampCode = `${currentProperty}: clamp(${topMin}px, ${topVw}vw, ${topMax}px) clamp(${rightLeftMin}px, ${rightLeftVw}vw, ${rightLeftMax}px) clamp(${bottomMin}px, ${bottomVw}vw, ${bottomMax}px);`;
+                    }
                 }
             } else {
+                // For font-size, width, height
                 const min = parseFloat(document.getElementById('min').value);
                 const max = parseFloat(document.getElementById('max').value);
                 if (min && max && vw && min <= max) {
