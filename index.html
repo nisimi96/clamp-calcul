@@ -278,100 +278,137 @@
     </div>
 
     <script>
-function showSection(section) {
-    const sections = document.querySelectorAll('.input-section');
-    sections.forEach(s => s.style.display = 'none');
-    document.getElementById(`${section}-section`).style.display = 'block';
-    document.getElementById('result').textContent = '';  // Clear result when changing sections
-    document.getElementById('copy-btn').style.display = 'none';  // Hide copy button
-}
-
-// Toggle between single side and all sides for padding or margin
-function togglePaddingType(type) {
-    if (type === 'single') {
-        document.getElementById('padding-all-section').style.display = 'none';
-        document.getElementById('padding-single-section').style.display = 'block';
-    } else {
-        document.getElementById('padding-all-section').style.display = 'block';
-        document.getElementById('padding-single-section').style.display = 'none';
-    }
-}
-
-function toggleMarginType(type) {
-    if (type === 'single') {
-        document.getElementById('margin-all-section').style.display = 'none';
-        document.getElementById('margin-single-section').style.display = 'block';
-    } else {
-        document.getElementById('margin-all-section').style.display = 'block';
-        document.getElementById('margin-single-section').style.display = 'none';
-    }
-}
-
-// Helper function to generate clamp() for all sides
-function generateClampForAllSides(topMin, topMax, rightMin, rightMax, bottomMin, bottomMax, leftMin, leftMax, vw) {
-    return `clamp(${topMin}px, ${Math.round((topMax - topMin) / vw * 100)}vw, ${topMax}px) clamp(${rightMin}px, ${Math.round((rightMax - rightMin) / vw * 100)}vw, ${rightMax}px) clamp(${bottomMin}px, ${Math.round((bottomMax - bottomMin) / vw * 100)}vw, ${bottomMax}px) clamp(${leftMin}px, ${Math.round((leftMax - leftMin) / vw * 100)}vw, ${leftMax}px);`;
-}
-
-// Main function to generate clamp() based on property
-function generateClamp(property) {
-    const result = document.getElementById('result');
-    let clampCode = '';
-
-    if (property === 'font-size') {
-        const min = parseFloat(document.getElementById('font-min').value);
-        const max = parseFloat(document.getElementById('font-max').value);
-        const vw = parseFloat(document.getElementById('font-vw').value);
-        if (min && max && vw && min <= max) {
-            const vwValue = Math.round(((max - min) / vw) * 100);
-            clampCode = `font-size: clamp(${min}px, ${vwValue}vw, ${max}px);`;
+        function showSection(section) {
+            const sections = document.querySelectorAll('.input-section');
+            sections.forEach(s => s.style.display = 'none');
+            document.getElementById(`${section}-section`).style.display = 'block';
+            document.getElementById('result').textContent = '';  // Clear result when changing sections
+            document.getElementById('copy-btn').style.display = 'none';  // Hide copy button
         }
-    } else if (property === 'padding') {
-        const vw = parseFloat(document.getElementById('padding-vw').value);
-        if (document.getElementById('padding-single').checked) {
-            // Single side padding
-            const side = document.getElementById('padding-single-side').value;
-            const min = parseFloat(document.getElementById('padding-single-min').value);
-            const max = parseFloat(document.getElementById('padding-single-max').value);
-            if (min && max && vw) {
-                clampCode = `padding-${side}: clamp(${min}px, ${Math.round((max - min) / vw * 100)}vw, ${max}px);`;
-            }
-        } else {
-            // All sides padding
-            const topMin = parseFloat(document.getElementById('padding-top-min').value);
-            const topMax = parseFloat(document.getElementById('padding-top-max').value);
-            const rightMin = parseFloat(document.getElementById('padding-right-min').value);
-            const rightMax = parseFloat(document.getElementById('padding-right-max').value);
-            const bottomMin = parseFloat(document.getElementById('padding-bottom-min').value);
-            const bottomMax = parseFloat(document.getElementById('padding-bottom-max').value);
-            const leftMin = parseFloat(document.getElementById('padding-left-min').value);
-            const leftMax = parseFloat(document.getElementById('padding-left-max').value);
 
-            if (topMin && topMax && rightMin && rightMax && bottomMin && bottomMax && leftMin && leftMax && vw) {
-                clampCode = `padding: ${generateClampForAllSides(topMin, topMax, rightMin, rightMax, bottomMin, bottomMax, leftMin, leftMax, vw)}`;
+        function togglePaddingType(type) {
+            if (type === 'single') {
+                document.getElementById('padding-all-section').style.display = 'none';
+                document.getElementById('padding-single-section').style.display = 'block';
+            } else {
+                document.getElementById('padding-all-section').style.display = 'block';
+                document.getElementById('padding-single-section').style.display = 'none';
             }
         }
-    }
 
-    if (clampCode) {
-        result.textContent = clampCode;
-        document.getElementById('copy-btn').style.display = 'block';  // Show copy button
-        document.getElementById('copy-btn').setAttribute('data-clipboard', clampCode);  // Set clipboard data
-    } else {
-        result.textContent = 'Please fill in all fields correctly.';
-        document.getElementById('copy-btn').style.display = 'none';  // Hide copy button if fields are invalid
-    }
-}
+        function toggleMarginType(type) {
+            if (type === 'single') {
+                document.getElementById('margin-all-section').style.display = 'none';
+                document.getElementById('margin-single-section').style.display = 'block';
+            } else {
+                document.getElementById('margin-all-section').style.display = 'block';
+                document.getElementById('margin-single-section').style.display = 'none';
+            }
+        }
 
-// Function to copy generated code to the clipboard
-function copyToClipboard() {
-    const copyText = document.getElementById('copy-btn').getAttribute('data-clipboard');
-    navigator.clipboard.writeText(copyText).then(() => {
-        alert('Code copied to clipboard!');
-    }, (err) => {
-        alert('Failed to copy: ', err);
-    });
-}
+        // Helper function to generate clamp() for all sides
+        function generateClampForAllSides(topMin, topMax, rightMin, rightMax, bottomMin, bottomMax, leftMin, leftMax, vw) {
+            vw = vw / 10; // Divide VW by 10 for padding/margin
+            return `clamp(${topMin}px, ${Math.round((topMax - topMin) / vw * 100)}vw, ${topMax}px) 
+                    clamp(${rightMin}px, ${Math.round((rightMax - rightMin) / vw * 100)}vw, ${rightMax}px) 
+                    clamp(${bottomMin}px, ${Math.round((bottomMax - bottomMin) / vw * 100)}vw, ${bottomMax}px) 
+                    clamp(${leftMin}px, ${Math.round((leftMax - leftMin) / vw * 100)}vw, ${leftMax}px);`;
+        }
 
+        // Main function to generate clamp() based on property
+        function generateClamp(property) {
+            const result = document.getElementById('result');
+            let clampCode = '';
+
+            if (property === 'font-size') {
+                const min = parseFloat(document.getElementById('font-min').value);
+                const max = parseFloat(document.getElementById('font-max').value);
+                let vw = parseFloat(document.getElementById('font-vw').value) / 10;  // Divide VW by 10
+                if (min && max && vw && min <= max) {
+                    const vwValue = Math.round((max - min) / vw * 100);
+                    clampCode = `font-size: clamp(${min}px, ${vwValue}vw, ${max}px);`;
+                }
+            } else if (property === 'padding') {
+                let vw = parseFloat(document.getElementById('padding-vw').value) / 10;  // Divide VW by 10 for padding
+                if (document.getElementById('padding-single').checked) {
+                    // Single side padding
+                    const side = document.getElementById('padding-single-side').value;
+                    const min = parseFloat(document.getElementById('padding-single-min').value);
+                    const max = parseFloat(document.getElementById('padding-single-max').value);
+                    if (min && max && vw) {
+                        const vwValue = Math.round((max - min) / vw * 100);
+                        clampCode = `padding-${side}: clamp(${min}px, ${vwValue}vw, ${max}px);`;
+                    }
+                } else {
+                    // All sides padding
+                    const topMin = parseFloat(document.getElementById('padding-top-min').value);
+                    const topMax = parseFloat(document.getElementById('padding-top-max').value);
+                    const rightMin = parseFloat(document.getElementById('padding-right-min').value);
+                    const rightMax = parseFloat(document.getElementById('padding-right-max').value);
+                    const bottomMin = parseFloat(document.getElementById('padding-bottom-min').value);
+                    const bottomMax = parseFloat(document.getElementById('padding-bottom-max').value);
+                    const leftMin = parseFloat(document.getElementById('padding-left-min').value);
+                    const leftMax = parseFloat(document.getElementById('padding-left-max').value);
+
+                    if (topMin && topMax && rightMin && rightMax && bottomMin && bottomMax && leftMin && leftMax && vw) {
+                        clampCode = `padding: ${generateClampForAllSides(topMin, topMax, rightMin, rightMax, bottomMin, bottomMax, leftMin, leftMax, vw)}`;
+                    }
+                }
+            } else if (property === 'margin') {
+                let vw = parseFloat(document.getElementById('margin-vw').value) / 10;  // Divide VW by 10 for margin
+                if (document.getElementById('margin-single').checked) {
+                    // Single side margin
+                    const side = document.getElementById('margin-single-side').value;
+                    const min = parseFloat(document.getElementById('margin-single-min').value);
+                    const max = parseFloat(document.getElementById('margin-single-max').value);
+                    if (min && max && vw) {
+                        const vwValue = Math.round((max - min) / vw * 100);
+                        clampCode = `margin-${side}: clamp(${min}px, ${vwValue}vw, ${max}px);`;
+                    }
+                } else {
+                    // All sides margin
+                    const topMin = parseFloat(document.getElementById('margin-top-min').value);
+                    const topMax = parseFloat(document.getElementById('margin-top-max').value);
+                    const rightMin = parseFloat(document.getElementById('margin-right-min').value);
+                    const rightMax = parseFloat(document.getElementById('margin-right-max').value);
+                    const bottomMin = parseFloat(document.getElementById('margin-bottom-min').value);
+                    const bottomMax = parseFloat(document.getElementById('margin-bottom-max').value);
+                    const leftMin = parseFloat(document.getElementById('margin-left-min').value);
+                    const leftMax = parseFloat(document.getElementById('margin-left-max').value);
+
+                    if (topMin && topMax && rightMin && rightMax && bottomMin && bottomMax && leftMin && leftMax && vw) {
+                        clampCode = `margin: ${generateClampForAllSides(topMin, topMax, rightMin, rightMax, bottomMin, bottomMax, leftMin, leftMax, vw)}`;
+                    }
+                }
+            } else if (property === 'width' || property === 'height') {
+                const min = parseFloat(document.getElementById(`${property}-min`).value);
+                const max = parseFloat(document.getElementById(`${property}-max`).value);
+                let vw = parseFloat(document.getElementById(`${property}-vw`).value) / 10;  // Divide VW by 10
+                if (min && max && vw && min <= max) {
+                    const vwValue = Math.round((max - min) / vw * 100);
+                    clampCode = `${property}: clamp(${min}px, ${vwValue}vw, ${max}px);`;
+                }
+            }
+
+            if (clampCode) {
+                result.textContent = clampCode;
+                document.getElementById('copy-btn').style.display = 'block';  // Show copy button
+                document.getElementById('copy-btn').setAttribute('data-clipboard', clampCode);  // Set clipboard data
+            } else {
+                result.textContent = 'Please fill in all fields correctly.';
+                document.getElementById('copy-btn').style.display = 'none';  // Hide copy button if fields are invalid
+            }
+        }
+
+        // Function to copy generated code to the clipboard
+        function copyToClipboard() {
+            const copyText = document.getElementById('copy-btn').getAttribute('data-clipboard');
+            navigator.clipboard.writeText(copyText).then(() => {
+                alert('Code copied to clipboard!');
+            }, (err) => {
+                alert('Failed to copy: ', err);
+            });
+        }
     </script>
 </body>
 </html>
