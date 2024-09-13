@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Clamp() Calculator</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #1c1c1c, #333);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #f4f4f4;
+        }
+
+        .container {
+            background: linear-gradient(145deg, #262626, #1f1f1f);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            border: 2px solid #d4af37;
+            color: #f4f4f4;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 28px;
+            color: #d4af37;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+
+        .btn-group button {
+            background-color: #444;
+            color: white;
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .btn-group button:hover {
+            background-color: #666;
+        }
+
+        .input-section {
+            display: none;
+            margin-top: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #444;
+            border-radius: 8px;
+            background-color: #1c1c1c;
+            color: #f4f4f4;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus {
+            border-color: #d4af37;
+            outline: none;
+        }
+
+        .generate-btn {
+            width: 100%;
+            padding: 15px;
+            background-color: #d4af37;
+            color: black;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.4s ease, transform 0.3s ease;
+        }
+
+        .generate-btn:hover {
+            background-color: #f1c453;
+            transform: translateY(-2px);
+        }
+
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            text-align: center;
+            color: #f4f4f4;
+            background-color: #1c1c1c;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .copy-btn {
+            margin-top: 10px;
+            background-color: #444;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .copy-btn:hover {
+            background-color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Responsive Clamp() Calculator</h1>
+        <div class="btn-group">
+            <button onclick="showSection('font-size')">Font Size</button>
+            <button onclick="showSection('padding')">Padding</button>
+            <button onclick="showSection('margin')">Margin</button>
+            <button onclick="showSection('width')">Width</button>
+            <button onclick="showSection('height')">Height</button>
+        </div>
+
+        <!-- Input Section for Font Size -->
+        <div id="font-size-section" class="input-section">
+            <h2>Calculate Font Size</h2>
+            <label for="font-min">Minimum Font Size (px):</label>
+            <input type="number" id="font-min" placeholder="e.g., 14">
+            <label for="font-max">Maximum Font Size (px):</label>
+            <input type="number" id="font-max" placeholder="e.g., 24">
+            <label for="font-vw">Viewport Width (vw):</label>
+            <input type="number" id="font-vw" placeholder="e.g., 100" value="100">
+            <button class="generate-btn" onclick="generateClamp('font-size')">Generate Code</button>
+        </div>
+
+        <!-- Input Section for Padding -->
+        <div id="padding-section" class="input-section">
+            <h2>Calculate Padding</h2>
+            <div>
+                <input type="radio" id="padding-all" name="padding-type" value="all" checked onclick="togglePaddingType('all')">
+                <label for="padding-all">All Sides</label>
+                <input type="radio" id="padding-single" name="padding-type" value="single" onclick="togglePaddingType('single')">
+                <label for="padding-single">Single Side</label>
+            </div>
+
+            <!-- Single Side Inputs -->
+            <div id="padding-single-section" style="display: none;">
+                <label for="padding-single-side">Choose Side:</label>
+                <select id="padding-single-side">
+                    <option value="top">Padding Top</option>
+                    <option value="right">Padding Right</option>
+                    <option value="bottom">Padding Bottom</option>
+                    <option value="left">Padding Left</option>
+                </select>
+                <label for="padding-single-min">Min (px):</label>
+                <input type="number" id="padding-single-min" placeholder="e.g., 10">
+                <label for="padding-single-max">Max (px):</label>
+                <input type="number" id="padding-single-max" placeholder="e.g., 20">
+            </div>
+
+            <!-- All Sides Inputs -->
+            <div id="padding-all-section">
+                <label for="padding-top-min">Padding Top Min (px):</label>
+                <input type="number" id="padding-top-min" placeholder="e.g., 10">
+                <label for="padding-top-max">Padding Top Max (px):</label>
+                <input type="number" id="padding-top-max" placeholder="e.g., 20">
+
+                <label for="padding-right-min">Padding Right Min (px):</label>
+                <input type="number" id="padding-right-min" placeholder="e.g., 15">
+                <label for="padding-right-max">Padding Right Max (px):</label>
+                <input type="number" id="padding-right-max" placeholder="e.g., 25">
+
+                <label for="padding-bottom-min">Padding Bottom Min (px):</label>
+                <input type="number" id="padding-bottom-min" placeholder="e.g., 10">
+                <label for="padding-bottom-max">Padding Bottom Max (px):</label>
+                <input type="number" id="padding-bottom-max" placeholder="e.g., 20">
+
+                <label for="padding-left-min">Padding Left Min (px):</label>
+                <input type="number" id="padding-left-min" placeholder="e.g., 15">
+                <label for="padding-left-max">Padding Left Max (px):</label>
+                <input type="number" id="padding-left-max" placeholder="e.g., 25">
+            </div>
+
+            <label for="padding-vw">Viewport Width (vw):</label>
+            <input type="number" id="padding-vw" placeholder="e.g., 100" value="100">
+            <button class="generate-btn" onclick="generateClamp('padding')">Generate Code</button>
+        </div>
+
+        <!-- Input Section for Margin -->
+        <div id="margin-section" class="input-section">
+            <h2>Calculate Margin</h2>
+            <div>
+                <input type="radio" id="margin-all" name="margin-type" value="all" checked onclick="toggleMarginType('all')">
+                <label for="margin-all">All Sides</label>
+                <input type="radio" id="margin-single" name="margin-type" value="single" onclick="toggleMarginType('single')">
+                <label for="margin-single">Single Side</label>
+            </div>
+
+            <!-- Single Side Inputs -->
+            <div id="margin-single-section" style="display: none;">
+                <label for="margin-single-side">Choose Side:</label>
+                <select id="margin-single-side">
+                    <option value="top">Margin Top</option>
+                    <option value="right">Margin Right</option>
+                    <option value="bottom">Margin Bottom</option>
+                    <option value="left">Margin Left</option>
+                </select>
+                <label for="margin-single-min">Min (px):</label>
+                <input type="number" id="margin-single-min" placeholder="e.g., 10">
+                <label for="margin-single-max">Max (px):</label>
+                <input type="number" id="margin-single-max" placeholder="e.g., 20">
+            </div>
+
+            <!-- All Sides Inputs -->
+            <div id="margin-all-section">
+                <label for="margin-top-min">Margin Top Min (px):</label>
+                <input type="number" id="margin-top-min" placeholder="e.g., 10">
+                <label for="margin-top-max">Margin Top Max (px):</label>
+                <input type="number" id="margin-top-max" placeholder="e.g., 20">
+
+                <label for="margin-right-min">Margin Right Min (px):</label>
+                <input type="number" id="margin-right-min" placeholder="e.g., 15">
+                <label for="margin-right-max">Margin Right Max (px):</label>
+                <input type="number" id="margin-right-max" placeholder="e.g., 25">
+
+                <label for="margin-bottom-min">Margin Bottom Min (px):</label>
+                <input type="number" id="margin-bottom-min" placeholder="e.g., 10">
+                <label for="margin-bottom-max">Margin Bottom Max (px):</label>
+                <input type="number" id="margin-bottom-max" placeholder="e.g., 20">
+
+                <label for="margin-left-min">Margin Left Min (px):</label>
+                <input type="number" id="margin-left-min" placeholder="e.g., 15">
+                <label for="margin-left-max">Margin Left Max (px):</label>
+                <input type="number" id="margin-left-max" placeholder="e.g., 25">
+            </div>
+
+            <label for="margin-vw">Viewport Width (vw):</label>
+            <input type="number" id="margin-vw" placeholder="e.g., 100" value="100">
+            <button class="generate-btn" onclick="generateClamp('margin')">Generate Code</button>
+        </div>
+
+        <!-- Input Section for Width -->
+        <div id="width-section" class="input-section">
+            <h2>Calculate Width</h2>
+            <label for="width-min">Minimum Width (px):</label>
+            <input type="number" id="width-min" placeholder="e.g., 200">
+            <label for="width-max">Maximum Width (px):</label>
+            <input type="number" id="width-max" placeholder="e.g., 400">
+            <label for="width-vw">Viewport Width (vw):</label>
+            <input type="number" id="width-vw" placeholder="e.g., 100" value="100">
+            <button class="generate-btn" onclick="generateClamp('width')">Generate Code</button>
+        </div>
+
+        <!-- Input Section for Height -->
+        <div id="height-section" class="input-section">
+            <h2>Calculate Height</h2>
+            <label for="height-min">Minimum Height (px):</label>
+            <input type="number" id="height-min" placeholder="e.g., 40">
+            <label for="height-max">Maximum Height (px):</label>
+            <input type="number" id="height-max" placeholder="e.g., 80">
+            <label for="height-vw">Viewport Width (vw):</label>
+            <input type="number" id="height-vw" placeholder="e.g., 100" value="100">
+            <button class="generate-btn" onclick="generateClamp('height')">Generate Code</button>
+        </div>
+
+        <p class="result" id="result"></p>
+        <button id="copy-btn" class="copy-btn" style="display: none;" onclick="copyToClipboard()">Copy to Clipboard</button>
+    </div>
+
+    <script>
+function showSection(section) {
+    const sections = document.querySelectorAll('.input-section');
+    sections.forEach(s => s.style.display = 'none');
+    document.getElementById(`${section}-section`).style.display = 'block';
+    document.getElementById('result').textContent = '';  // Clear result when changing sections
+    document.getElementById('copy-btn').style.display = 'none';  // Hide copy button
+}
+
+// Toggle between single side and all sides for padding or margin
+function togglePaddingType(type) {
+    if (type === 'single') {
+        document.getElementById('padding-all-section').style.display = 'none';
+        document.getElementById('padding-single-section').style.display = 'block';
+    } else {
+        document.getElementById('padding-all-section').style.display = 'block';
+        document.getElementById('padding-single-section').style.display = 'none';
+    }
+}
+
+function toggleMarginType(type) {
+    if (type === 'single') {
+        document.getElementById('margin-all-section').style.display = 'none';
+        document.getElementById('margin-single-section').style.display = 'block';
+    } else {
+        document.getElementById('margin-all-section').style.display = 'block';
+        document.getElementById('margin-single-section').style.display = 'none';
+    }
+}
+
+// Helper function to generate clamp() for all sides
+function generateClampForAllSides(topMin, topMax, rightMin, rightMax, bottomMin, bottomMax, leftMin, leftMax, vw) {
+    return `clamp(${topMin}px, ${Math.round((topMax - topMin) / vw * 100)}vw, ${topMax}px) clamp(${rightMin}px, ${Math.round((rightMax - rightMin) / vw * 100)}vw, ${rightMax}px) clamp(${bottomMin}px, ${Math.round((bottomMax - bottomMin) / vw * 100)}vw, ${bottomMax}px) clamp(${leftMin}px, ${Math.round((leftMax - leftMin) / vw * 100)}vw, ${leftMax}px);`;
+}
+
+// Main function to generate clamp() based on property
+function generateClamp(property) {
+    const result = document.getElementById('result');
+    let clampCode = '';
+
+    if (property === 'font-size') {
+        const min = parseFloat(document.getElementById('font-min').value);
+        const max = parseFloat(document.getElementById('font-max').value);
+        const vw = parseFloat(document.getElementById('font-vw').value);
+        if (min && max && vw && min <= max) {
+            const vwValue = Math.round(((max - min) / vw) * 100);
+            clampCode = `font-size: clamp(${min}px, ${vwValue}vw, ${max}px);`;
+        }
+    } else if (property === 'padding') {
+        const vw = parseFloat(document.getElementById('padding-vw').value);
+        if (document.getElementById('padding-single').checked) {
+            // Single side padding
+            const side = document.getElementById('padding-single-side').value;
+            const min = parseFloat(document.getElementById('padding-single-min').value);
+            const max = parseFloat(document.getElementById('padding-single-max').value);
+            if (min && max && vw) {
+                clampCode = `padding-${side}: clamp(${min}px, ${Math.round((max - min) / vw * 100)}vw, ${max}px);`;
+            }
+        } else {
+            // All sides padding
+            const topMin = parseFloat(document.getElementById('padding-top-min').value);
+            const topMax = parseFloat(document.getElementById('padding-top-max').value);
+            const rightMin = parseFloat(document.getElementById('padding-right-min').value);
+            const rightMax = parseFloat(document.getElementById('padding-right-max').value);
+            const bottomMin = parseFloat(document.getElementById('padding-bottom-min').value);
+            const bottomMax = parseFloat(document.getElementById('padding-bottom-max').value);
+            const leftMin = parseFloat(document.getElementById('padding-left-min').value);
+            const leftMax = parseFloat(document.getElementById('padding-left-max').value);
+
+            if (topMin && topMax && rightMin && rightMax && bottomMin && bottomMax && leftMin && leftMax && vw) {
+                clampCode = `padding: ${generateClampForAllSides(topMin, topMax, rightMin, rightMax, bottomMin, bottomMax, leftMin, leftMax, vw)}`;
+            }
+        }
+    }
+
+    if (clampCode) {
+        result.textContent = clampCode;
+        document.getElementById('copy-btn').style.display = 'block';  // Show copy button
+        document.getElementById('copy-btn').setAttribute('data-clipboard', clampCode);  // Set clipboard data
+    } else {
+        result.textContent = 'Please fill in all fields correctly.';
+        document.getElementById('copy-btn').style.display = 'none';  // Hide copy button if fields are invalid
+    }
+}
+
+// Function to copy generated code to the clipboard
+function copyToClipboard() {
+    const copyText = document.getElementById('copy-btn').getAttribute('data-clipboard');
+    navigator.clipboard.writeText(copyText).then(() => {
+        alert('Code copied to clipboard!');
+    }, (err) => {
+        alert('Failed to copy: ', err);
+    });
+}
+
+    </script>
+</body>
+</html>
